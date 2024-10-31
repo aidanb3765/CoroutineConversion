@@ -9,6 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -53,7 +56,22 @@ class MainActivity : AppCompatActivity() {
         */
 
         findViewById<Button>(R.id.revealButton).setOnClickListener{
-            
+            start()
         }
+    }
+
+    private fun start() {
+        mainScope.launch {
+            repeat(100) { opacity ->
+                currentTextView.text = String.format(Locale.getDefault(), "Current opacity: %d", opacity)
+                cakeImageView.alpha = opacity / 100f
+                delay(60)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 }
